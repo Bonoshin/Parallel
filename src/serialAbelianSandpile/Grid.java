@@ -4,15 +4,16 @@ package serialAbelianSandpile;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import javax.imageio.ImageIO;
-import java.util.concurrent.RecursiveAction;
 import java.util.concurrent.ForkJoinPool;
 
+import javax.imageio.ImageIO;
+
+
 //This class is for the grid for the Abelian Sandpile cellular automaton
-public class Grid extends RecursiveAction{
+public class Grid {
 	private int rows, columns;
 	private int [][] grid; //grid 
-	private int [][] updateGrid;//grid for next time step
+	int [][] updateGrid;//grid for next time step
 	private final int startRow, endRow;
     
 	public Grid(int w, int h) {
@@ -51,11 +52,7 @@ public class Grid extends RecursiveAction{
 		}
 	}
 
-	public class GridUpdate(Grid grid, int startRow, int endRow) {
-        this.grid = grid;
-        this.startRow = startRow;
-        this.endRow = endRow;
-    }
+	
 	
 	public int getRows() {
 		return rows-2; //less the sink
@@ -88,59 +85,26 @@ public class Grid extends RecursiveAction{
 		}
 	}
 	
+ 	private static final ForkJoinPool pool = new ForkJoinPool();
+
 	//key method to calculate the next update grod
 	boolean update() {
+		ParallelGrid task = new ParallelGrid(this, 1, rows - 1);
+		pool.invoke(task);
 		boolean change=false;
 		//do not update border
 		for( int i = 1; i<rows-1; i++ ) {
 			for( int j = 1; j<columns-1; j++ ) {
-				updateGrid[i][j] = (grid[i][j] % 4) + 
-						(grid[i-1][j] / 4) +
-						grid[i+1][j] / 4 +
-						grid[i][j-1] / 4 + 
-						grid[i][j+1] / 4;
 				if (grid[i][j]!=updateGrid[i][j]) {  
 					change=true;
+					break;
 				}
 		}} //end nested for
 	if (change) { nextTimeStep();}
 	return change;
 	}
 
-	@Override
-    protected Boolean compute() {
-        if (endRow - startRow <= THRESHOLD) {
-            return updateStepless();
-        } else {
-            int mid = (startRow + endRow) / 2;
-            GridUpdateTask upperTask = new GridUpdateTask(grid, startRow, mid);
-            GridUpdateTask lowerTask = new GridUpdateTask(grid, mid, endRow);
-            invokeAll(upperTask, lowerTask);
-
-            boolean upperResult = upperTask.join();
-            boolean lowerResult = lowerTask.join();
-
-            return upperResult || lowerResult;
-        }
-    }
-
-	private Boolean updateStepless() {
-        boolean change = false;
-        for (int i = startRow; i < endRow; i++) {
-            for (int j = 1; j < grid.getColumns() + 1; j++) {
-                int newValue = (grid.get(i, j) % 4)
-                        + (grid.get(i - 1, j) / 4)
-                        + (grid.get(i + 1, j) / 4)
-                        + (grid.get(i, j - 1) / 4)
-                        + (grid.get(i, j + 1) / 4);
-                if (grid.get(i, j) != newValue) {
-                    change = true;
-                }
-                grid.updateGrid[i][j] = newValue;
-            }
-        }
-        return change;
-    }
+	
 	
 	
 	
