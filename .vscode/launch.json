@@ -16,7 +16,7 @@
             "request": "launch",
             "mainClass": "serialAbelianSandpile.AutomatonSimulation",
             "projectName": "PCP_ParallelAssignment2024",
-            "args": "input/8_by_8_all_4copy.csv output/8_by_8_all_4copy.png"
+            "args": "input/1001_by_1001_all_8.csv output/1001(12).png"
         }
     ]
 }

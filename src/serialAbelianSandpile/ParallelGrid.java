@@ -7,7 +7,7 @@ import java.util.concurrent.ForkJoinPool;
 
 public class ParallelGrid extends RecursiveAction{
     
-    private static final int THRESHOLD = 100;
+    private static final int THRESHOLD = 12;
     private final Grid grid;
     private final int startRow, endRow;
 
