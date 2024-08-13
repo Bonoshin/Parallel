@@ -27,6 +27,8 @@ public class Grid extends RecursiveAction{
 				updateGrid[i][j]=0;
 			}
 		}
+		this.startRow = 0;
+		this.endRow = 0;
 	}
 
 	public Grid(int[][] newGrid) {
@@ -49,7 +51,7 @@ public class Grid extends RecursiveAction{
 		}
 	}
 
-	public GridUpdate(Grid grid, int startRow, int endRow) {
+	public class GridUpdate(Grid grid, int startRow, int endRow) {
         this.grid = grid;
         this.startRow = startRow;
         this.endRow = endRow;
